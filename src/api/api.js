@@ -1,4 +1,4 @@
-const BASE_URL = "https://demo2.z-bit.ee";
+const BASE_URL = "http://demo2.z-bit.ee";
 
 let token = null;
 
@@ -16,19 +16,31 @@ async function request(url, method = "GET", body) {
     body: body ? JSON.stringify(body) : undefined
   });
 
+  const data = await res.json().catch(() => null);
+
   if (!res.ok) {
+    console.error("API ERROR:", data);
     throw new Error("API error");
   }
 
-  return res.json();
+  return data;
 }
 
-// AUTH
-export const register = (data) => request("/users", "POST", data);
-export const login = (data) => request("/tokens", "POST", data);
 
-// TASKS
-export const getTasks = () => request("/tasks");
-export const createTask = (data) => request("/tasks", "POST", data);
-export const updateTask = (id, data) => request(`/tasks/${id}`, "PUT", data);
-export const deleteTask = (id) => request(`/tasks/${id}`, "DELETE");
+export const register = (data) =>
+  request("/users", "POST", data);
+
+export const login = (data) =>
+  request("/users/get-token", "POST", data);
+
+export const getTasks = () =>
+  request("/tasks");
+
+export const createTask = (data) =>
+  request("/tasks", "POST", data);
+
+export const updateTask = (id, data) =>
+  request(`/tasks/${id}`, "PUT", data);
+
+export const deleteTask = (id) =>
+  request(`/tasks/${id}`, "DELETE");

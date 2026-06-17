@@ -1,22 +1,28 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useContext } from "react";
-
-import AuthContext from "./context/AuthContext";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import Todo from "./pages/Todo";
+import { useContext } from "react";
+import AuthContext from "./context/AuthContext";
 
-function App() {
-  const { user } = useContext(AuthContext);
+function PrivateRoute({ children }) {
+  const { token } = useContext(AuthContext);
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={user ? <h1>TODO LIST (next step)</h1> : <Login />}
-        />
-      </Routes>
-    </BrowserRouter>
-  );
+  return token ? children : <Navigate to="/" />;
 }
 
-export default App;
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+
+      <Route
+        path="/todo"
+        element={
+          <PrivateRoute>
+            <Todo />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
+  );
+}
